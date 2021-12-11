@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/dgraph-io/dgo/v210/protos/api"
 	"github.com/go-chi/chi"
@@ -60,6 +62,7 @@ func Route() *chi.Mux {
 	mux.Get("/getAll", getAllFiles)
 	mux.Post("/insertCode", insertCode)
 	mux.Get("/getFile", getFile);
+	mux.Post("/runProgram", runProgram)
 	return mux
 }
 
@@ -116,3 +119,25 @@ func getQuery( uid string )string{
 	return fmt.Sprintf(getFileWithId,uid )
 }
 
+func runProgram(w http.ResponseWriter, r *http.Request) {
+	
+
+	w.Header().Set("Content-Type", "application/json")
+	var rawCode Code
+	_ = json.NewDecoder(r.Body).Decode(&rawCode)
+	 raw := []byte(rawCode.Code[0])
+	 err := os.WriteFile("script.py", raw, 0644)
+	 if err != nil {
+        fmt.Errorf("error creating file: %v", err)
+    }
+
+	cmd:= exec.Command("C:\\Users\\carlo\\AppData\\Local\\Programs\\Python\\Python310\\python.exe","./script.py")
+	out, err := cmd.Output()
+
+	if err != nil {
+		json.NewEncoder(w).Encode("Syntaxis error")
+
+		return
+	}
+	json.NewEncoder(w).Encode(string(out))
+}
