@@ -1,8 +1,8 @@
 # Drawflow-Requests
+## For init DGraph Database
 
-FOR INIT DGraph Database
-docker run --rm -it -p 8080:8080 -v ~/dgraph:/dgraph dgraph/standalone:v20.03.0
+> docker run --rm -it -p 8080:8080 -v ~/dgraph:/dgraph dgraph/standalone:v20.03.0
 
-For Run Project
+## For Run Project
 
-go run .
+> go run .
